@@ -1,0 +1,256 @@
+# Generador de blogs con Python
+
+
+
+import random
+from datetime import datetime
+
+blogs_creados = 0
+
+
+
+def generate_blog(topic):
+    introductions = [
+        f"En la actualidad, {topic} es un tema que despierta mucho interés. Conocerlo nos permite comprender mejor el mundo que nos rodea.",
+        f"Hoy en día, {topic} tiene un papel importante en nuestra sociedad. Por eso, es interesante conocer sus características y su impacto.",
+        f"Hablar sobre {topic} nos permite descubrir nuevas ideas y aprender información que puede ser útil en nuestra vida cotidiana."
+    ]
+
+    developments = [
+        f"Uno de los aspectos más importantes de {topic} es su influencia en diferentes actividades. Está relacionado con situaciones que encontramos en nuestra vida diaria.",
+        f"Para comprender mejor {topic}, es necesario conocer sus características principales. Estas nos ayudan a identificar sus beneficios, dificultades y posibles consecuencias.",
+        f"Además, {topic} puede relacionarse con distintos ámbitos de la sociedad, como la educación, la ciencia y la tecnología."
+    ]
+
+    examples = [
+        f"Un ejemplo relacionado con {topic} puede encontrarse en nuestra comunidad. Observar estas situaciones nos ayuda a comprender mejor su importancia.",
+        f"En la vida cotidiana podemos encontrar diferentes ejemplos de {topic}. Estos muestran cómo los conocimientos pueden aplicarse en situaciones reales.",
+        f"También podemos aprender sobre {topic} mediante la investigación, la observación y el intercambio de ideas."
+    ]
+
+    recommendations = [
+        f"Para conocer más sobre {topic}, es recomendable consultar fuentes confiables, investigar y compartir información.",
+        f"Una buena manera de aprender sobre {topic} es mantener la curiosidad, hacer preguntas y analizar diferentes puntos de vista.",
+        f"Es importante actuar con responsabilidad y utilizar nuestros conocimientos sobre {topic} para tomar mejores decisiones."
+    ]
+
+    conclusions = [
+        f"En conclusión, {topic} es un tema que merece nuestra atención. Seguir aprendiendo sobre él nos permite ampliar nuestros conocimientos.",
+        f"Finalmente, comprender {topic} nos ayuda a reconocer su importancia y a reflexionar sobre cómo se relaciona con nuestra vida.",
+        f"En resumen, investigar sobre {topic} nos permite desarrollar nuevas ideas y comprender mejor nuestro entorno."
+    ]
+
+    blog = random.choice(introductions) + "\n\n"
+    blog += random.choice(developments) + "\n\n"
+    blog += random.choice(examples) + "\n\n"
+    blog += random.choice(recommendations) + "\n\n"
+    blog += random.choice(conclusions)
+
+    return blog
+
+
+
+def create_blog():
+    global blogs_creados
+
+    print("\n===== CATEGORÍAS =====")
+    print("1. Tecnología")
+    print("2. Ciencia")
+    print("3. Medio ambiente")
+    print("4. Educación")
+    print("5. Entretenimiento")
+
+    categories = {
+        "1": "Tecnología",
+        "2": "Ciencia",
+        "3": "Medio ambiente",
+        "4": "Educación",
+        "5": "Entretenimiento"
+    }
+
+    category_option = input("\nSelecciona una categoría: ")
+
+    if category_option not in categories:
+        print("Categoría no válida.")
+        return
+
+    category = categories[category_option]
+
+    title = input("\nEscribe el título de tu blog: ")
+    topic = input("¿Sobre qué tema será tu blog?: ")
+
+    date = datetime.now().strftime("%d/%m/%Y %H:%M")
+    blog_text = generate_blog(topic)
+
+    with open("mis_blogs.txt", "a", encoding="utf-8") as file:
+        file.write("TÍTULO: " + title + "\n")
+        file.write("CATEGORÍA: " + category + "\n")
+        file.write("TEMA: " + topic + "\n")
+        file.write("FECHA: " + date + "\n\n")
+        file.write(blog_text + "\n")
+        file.write("=" * 40 + "\n")
+
+    blogs_creados += 1
+
+    print("\n" + "=" * 50)
+    print("             BLOG GENERATOR")
+    print("=" * 50)
+    print("TÍTULO:", title.upper())
+    print("CATEGORÍA:", category)
+    print("TEMA:", topic)
+    print("FECHA:", date)
+    print("-" * 50)
+    print(blog_text)
+    print("=" * 50)
+    print("\n¡Tu blog se creó y guardó correctamente!")
+
+def view_blogs():
+    try:
+        with open("mis_blogs.txt", "r", encoding="utf-8") as file:
+            content = file.read()
+
+        if content:
+            print("\n===== MIS BLOGS GUARDADOS =====\n")
+            print(content)
+        else:
+            print("\nTodavía no tienes blogs guardados.")
+
+    except FileNotFoundError:
+        print("\nTodavía no has creado ningún blog.")
+
+
+def show_statistics():
+    print("\n===== ESTADÍSTICAS =====")
+    print("Blogs creados en esta sesión:", blogs_creados)
+
+    categories = [
+        "Tecnología",
+        "Ciencia",
+        "Medio ambiente",
+        "Educación",
+        "Entretenimiento"
+    ]
+
+    try:
+        with open("mis_blogs.txt", "r", encoding="utf-8") as file:
+            content = file.read()
+
+        print("\nBlogs por categoría:")
+
+        for category in categories:
+            count = content.count("CATEGORÍA: " + category)
+            print(category + ":", count)
+
+    except FileNotFoundError:
+        print("\nTodavía no tienes blogs guardados.")
+
+
+def search_by_category():
+    print("\n===== BUSCAR BLOGS POR CATEGORÍA =====")
+    print("1. Tecnología")
+    print("2. Ciencia")
+    print("3. Medio ambiente")
+    print("4. Educación")
+    print("5. Entretenimiento")
+
+    categories = {
+        "1": "Tecnología",
+        "2": "Ciencia",
+        "3": "Medio ambiente",
+        "4": "Educación",
+        "5": "Entretenimiento"
+    }
+
+    option = input("\nSelecciona una categoría: ")
+
+    if option not in categories:
+        print("Categoría no válida.")
+        return
+
+    selected_category = categories[option]
+
+    try:
+        with open("mis_blogs.txt", "r", encoding="utf-8") as file:
+            content = file.read()
+
+        blogs = content.split("=" * 40)
+        found = False
+
+        for blog in blogs:
+            if "CATEGORÍA: " + selected_category in blog:
+                print("\n" + blog.strip())
+                found = True
+
+        if not found:
+            print("\nNo hay blogs guardados en esta categoría.")
+
+    except FileNotFoundError:
+        print("\nTodavía no tienes blogs guardados.")
+
+
+
+def export_blog():
+    try:
+        with open("mis_blogs.txt", "r", encoding="utf-8") as file:
+            content = file.read()
+
+        if not content.strip():
+            print("\nNo hay blogs para exportar.")
+            return
+
+        filename = input(
+            "\nEscribe el nombre del archivo (sin espacios): "
+        )
+
+        if not filename.strip():
+            print("\nNombre no válido.")
+            return
+
+        with open(filename + ".txt", "w", encoding="utf-8") as file:
+            file.write(content)
+
+        print("\n¡Tus blogs se exportaron correctamente!")
+        print("Archivo creado:", filename + ".txt")
+
+    except FileNotFoundError:
+        print("\nTodavía no tienes blogs guardados.")
+
+
+
+print("================================")
+print("          BLOG GENERATOR")
+print("================================")
+
+while True:
+    print("\nMENÚ PRINCIPAL")
+    print("1. Crear un nuevo blog")
+    print("2. Ver mis blogs guardados")
+    print("3. Ver estadísticas")
+    print("4. Buscar blogs por categoría")
+    print("5. Eliminar todos los blogs")
+    print("6. Exportar mis blogs")
+    print("7. Salir")
+
+    option = input("\nSelecciona una opción: ")
+
+    if option == "1":
+        create_blog()
+
+    elif option == "2":
+        view_blogs()
+
+    elif option == "3":
+        show_statistics()
+
+    elif option == "4":
+        search_by_category()
+
+    elif option == "5":
+        delete_blogs()
+
+    elif option == "6":
+        export_blog()
+
+    elif option == "7":
+    print("\n¡Gracias por utilizar Blog Generator!")
+    break
